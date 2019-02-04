@@ -1,4 +1,4 @@
-#include <arduino.h>
+#include <Arduino.h>
 
 class SignalProcessing{
     public:
@@ -20,6 +20,8 @@ class SignalProcessing{
       float sign_factor;
       float average_oscillating_signal;
       float average_negative_values_respect_average_value;
+      float low_factor_frequencies;
+      float high_factor_frequencies;
       //constructores: 
       SignalProcessing(float proportional, float offset);
                               
@@ -39,4 +41,5 @@ class SignalProcessing{
       void signFactor();
       void averageOscillatingSignal();
       void averageNegativeValuesRespectAverageValue();
+      void factorFrequencies();
 };
