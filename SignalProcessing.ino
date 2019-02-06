@@ -1,6 +1,6 @@
 #include "SignalProcessing.h"
 int i;
-float constant=1, offset=0, value1, value2, value3;
+float constant=1, offset=500, value1, value2, value3;
 uint32_t t;
 
 SignalProcessing measurements(constant, offset);
@@ -14,7 +14,7 @@ void loop() {
   value2=analogRead(A0);
   value3=analogRead(A0);
   t=micros();
-  for(i=0 ; i<80 ; i++){
+  for(i=0 ; i<1000 ; i++){
     measurements.Processing(value1, micros());
     //delayMicroseconds(200);
   }
@@ -38,9 +38,17 @@ void loop() {
   Serial.println(measurements.average_oscillating_signal);
   Serial.print("average negative values respect average value = ");
   Serial.println(measurements.average_negative_values_respect_average_value);
+  Serial.print("loosen signal = ");
+  Serial.println(measurements.loosen_signal, 10);
+  Serial.print("signal frequency = ");
+  Serial.println(measurements.signal_frequency, 6);
+  Serial.print("oscillating_sign_factor = ");
+  Serial.println(measurements.oscillating_sign_factor, 6);
   Serial.print("time processin = ");
   Serial.println(t);
+  Serial.println(measurements.instant_sign_factor, 6);
+  Serial.println(measurements.low_factor_frequencies, 6);
   Serial.println();
 
-  delay(100);
+  delay(1000);
 }
