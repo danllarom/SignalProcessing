@@ -1,4 +1,5 @@
-#include "SignalProcessing.h"
+#include <SignalProcessing.h>
+
 int i;
 float constant=1, offset=500, value1, value2, value3;
 uint32_t t;
@@ -42,11 +43,8 @@ void loop() {
   Serial.println(measurements.loosen_signal, 10);
   Serial.print("signal frequency = ");
   Serial.println(measurements.signal_frequency, 6);
-  Serial.print("oscillating_sign_factor = ");
-  Serial.println(measurements.oscillating_sign_factor, 6);
   Serial.print("time processin = ");
   Serial.println(t);
-  Serial.println(measurements.instant_sign_factor, 6);
   Serial.println(measurements.low_factor_frequencies, 6);
   Serial.println();
 
