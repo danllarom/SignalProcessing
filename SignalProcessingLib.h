@@ -13,19 +13,32 @@ class SignalProcessing{
       float instant_value;
       float instant_value_before;
       float sampling_frequency;
-      float signal_frequency;
-      float loosen_signal;   //desface           
-      float average_value;
-      float average_quadratic_value;
-      float positive_average_value;
-      float negative_average_value;
-      float sign_factor;
-      float average_oscillating_signal;
-      float average_negative_values_respect_average_value;
+      float maximun_frequency;
       float low_factor_frequencies;
-      float high_factor_frequencies;
+      float high_factor_frequencies;  
+
+      float loosen_signal;   //desface  
+
+      float pre_average_value;
+      float average_value;
+
+      float pre_average_quadratic_value;
+      float average_quadratic_value;
+
+      float pre_positive_average_value;
+      float positive_average_value;
+
+      float pre_negative_average_value;
+      float negative_average_value;
+
+      float pre_sign_factor;
+      float sign_factor;
+
+      float average_negative_values_respect_average_value;
+
+
       //constructores: 
-      SignalProcessing(float proportional, float offset);
+      SignalProcessing(float proportional, float offset, float maximun_frequency);
                               
       //metodos:
       void Processing(float value, uint32_t t);
@@ -34,14 +47,12 @@ class SignalProcessing{
       //atributos privados:
       void instantValue(float value);
       void samplingFrequency();
-      void signalFrequency();
       void loosenSignal();
       void averageValue();
       void averageQuadraticValue();
       void positiveAverageValue();
       void negativeAverageValue();
       void signFactor();
-      void averageOscillatingSignal();
       void averageNegativeValuesRespectAverageValue();
       void factorFrequencies();
 };

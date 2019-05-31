@@ -1,8 +1,9 @@
 #include "SignalProcessingLib.h"
 
-SignalProcessing::SignalProcessing(float proportional, float offset){
+SignalProcessing::SignalProcessing(float proportional, float offset, float max_frequency){
   proportional_constant=proportional;
   offset_constant=offset;
+  maximun_frequency=max_frequency;
 }
 
 void SignalProcessing::Processing(float value, uint32_t t){
@@ -18,7 +19,6 @@ void SignalProcessing::Processing(float value, uint32_t t){
   positiveAverageValue();
   negativeAverageValue();
   signFactor();
-  averageOscillatingSignal();
   averageNegativeValuesRespectAverageValue();
 }
 
@@ -32,12 +32,8 @@ void SignalProcessing::samplingFrequency(){
   sampling_frequency=1/sampling_frequency;
 }
 
-void SignalProcessing::signalFrequency(){
-
-}
-
 void SignalProcessing::factorFrequencies(){
-  low_factor_frequencies = signal_frequency/(10*sampling_frequency);
+  low_factor_frequencies = maximun_frequency/sampling_frequency;
   if((low_factor_frequencies <= 0.001)){// && (low_factor_frequencies >= 1)){
     low_factor_frequencies = 0.001;
   }
@@ -45,73 +41,51 @@ void SignalProcessing::factorFrequencies(){
 }
 
 void SignalProcessing::loosenSignal(){
-  if(instant_value == 0 && instant_value_before < instant_value){
-      if(loosen_signal != 0){
-        signal_frequency = signal_frequency*0.9 + 0.1/loosen_signal;
-      }
-      loosen_signal=0;
-  }
-  if(instant_value > 0){
-      if(instant_value_before < 0){
-        if(loosen_signal != 0){
-          signal_frequency = signal_frequency*0.9 + 0.1/loosen_signal;
-        }
-        loosen_signal=0;
-      }
-  }  
-  loosen_signal=loosen_signal+1/sampling_frequency;
 
 }
 
 void SignalProcessing::averageValue(){
-    
-  average_value=average_value*high_factor_frequencies+instant_value*low_factor_frequencies;
-  
+  pre_average_value=pre_average_value*high_factor_frequencies+instant_value*low_factor_frequencies;  
+  average_value=average_value*high_factor_frequencies+pre_average_value*low_factor_frequencies;
 }
 
 void SignalProcessing::averageQuadraticValue(){
-  if((average_quadratic_value*average_quadratic_value*high_factor_frequencies+instant_value*instant_value*low_factor_frequencies) > 0){
-    average_quadratic_value=sqrt(average_quadratic_value*average_quadratic_value*high_factor_frequencies+instant_value*instant_value*low_factor_frequencies);
-  }
+  pre_average_quadratic_value=sqrt(pre_average_quadratic_value*pre_average_quadratic_value*high_factor_frequencies+instant_value*instant_value*low_factor_frequencies);
+  average_quadratic_value=average_quadratic_value*high_factor_frequencies+pre_average_quadratic_value*low_factor_frequencies;
 }
 
 void SignalProcessing::positiveAverageValue(){
-
   if(instant_value > 0){
-    positive_average_value=positive_average_value*high_factor_frequencies+instant_value*low_factor_frequencies;
+    pre_positive_average_value=pre_positive_average_value*high_factor_frequencies+instant_value*low_factor_frequencies;
   }
-  positive_average_value=positive_average_value*high_factor_frequencies;
-
-  
+  else{
+    pre_positive_average_value=pre_positive_average_value*high_factor_frequencies;
+  }
+  positive_average_value=positive_average_value*high_factor_frequencies+pre_positive_average_value*low_factor_frequencies;
 }
 
 void SignalProcessing::negativeAverageValue(){
 
   if(instant_value < 0){
-    negative_average_value=negative_average_value*high_factor_frequencies+instant_value*low_factor_frequencies;
+    pre_negative_average_value=pre_negative_average_value*high_factor_frequencies+instant_value*low_factor_frequencies;
   }
-  negative_average_value=negative_average_value*high_factor_frequencies;
+  else{
+    pre_negative_average_value=pre_negative_average_value*high_factor_frequencies;
+  }
+  negative_average_value=negative_average_value*high_factor_frequencies+pre_negative_average_value*low_factor_frequencies;
+  
   
 }
 
 void SignalProcessing::signFactor(){
 
   if(instant_value < 0){
-    sign_factor=sign_factor*high_factor_frequencies+1*low_factor_frequencies;
+    pre_sign_factor=pre_sign_factor*high_factor_frequencies+1*low_factor_frequencies;
   }
   else{
-    sign_factor=sign_factor*high_factor_frequencies;
+    pre_sign_factor=pre_sign_factor*high_factor_frequencies;
   }
-  
-}
-
-void SignalProcessing::averageOscillatingSignal(){
-
-  if((instant_value - average_value) > 0){
-    average_oscillating_signal=average_oscillating_signal*high_factor_frequencies+(instant_value - average_value)*low_factor_frequencies;
-  }
-  average_oscillating_signal=average_oscillating_signal*high_factor_frequencies;
-  
+  sign_factor=sign_factor*high_factor_frequencies+pre_sign_factor*low_factor_frequencies;
 }
 
 void SignalProcessing::averageNegativeValuesRespectAverageValue(){
