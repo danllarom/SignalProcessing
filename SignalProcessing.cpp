@@ -1,14 +1,14 @@
 #include "SignalProcessingLib.h"
 
-SignalProcessing::SignalProcessing(float proportional, float offset, float max_frequency){
+SignalProcessing::SignalProcessing(double proportional, double offset, double max_frequency){
   proportional_constant=proportional;
   offset_constant=offset;
   maximun_frequency=max_frequency;
 }
 
-void SignalProcessing::Processing(float value, uint32_t t){
+void SignalProcessing::Processing(double value, double t){
   time_before=time_now;
-  time_now=(float)t/1000000;
+  time_now=(float)t;
   
   instantValue(value);
   samplingFrequency();
@@ -22,7 +22,7 @@ void SignalProcessing::Processing(float value, uint32_t t){
   averageNegativeValuesRespectAverageValue();
 }
 
-void SignalProcessing::instantValue(float value){
+void SignalProcessing::instantValue(double value){
   instant_value_before=instant_value;
   value=value*proportional_constant;
   instant_value=value-offset_constant;
@@ -45,13 +45,18 @@ void SignalProcessing::loosenSignal(){
 }
 
 void SignalProcessing::averageValue(){
-  pre_average_value=pre_average_value*high_factor_frequencies+instant_value*low_factor_frequencies;  
-  average_value=average_value*high_factor_frequencies+pre_average_value*low_factor_frequencies;
+  pre_average_value=pre_average_value*high_factor_frequencies+instant_value*low_factor_frequencies; 
+  pre2_average_value=pre2_average_value*high_factor_frequencies+pre_average_value*low_factor_frequencies; 
+  average_value=average_value*high_factor_frequencies+pre2_average_value*low_factor_frequencies;
 }
 
 void SignalProcessing::averageQuadraticValue(){
-  pre_average_quadratic_value=sqrt(pre_average_quadratic_value*pre_average_quadratic_value*high_factor_frequencies+instant_value*instant_value*low_factor_frequencies);
-  average_quadratic_value=average_quadratic_value*high_factor_frequencies+pre_average_quadratic_value*low_factor_frequencies;
+  if((pre_average_quadratic_value*pre_average_quadratic_value*high_factor_frequencies+instant_value*instant_value*low_factor_frequencies)>0){
+    double a=pre_average_quadratic_value*pre_average_quadratic_value*high_factor_frequencies+instant_value*instant_value*low_factor_frequencies;
+    pre_average_quadratic_value=sqrt(a);
+    pre2_average_quadratic_value=pre2_average_quadratic_value*high_factor_frequencies+pre_average_quadratic_value*low_factor_frequencies;
+    average_quadratic_value=average_quadratic_value*high_factor_frequencies+pre2_average_quadratic_value*low_factor_frequencies;
+  }
 }
 
 void SignalProcessing::positiveAverageValue(){
@@ -61,7 +66,8 @@ void SignalProcessing::positiveAverageValue(){
   else{
     pre_positive_average_value=pre_positive_average_value*high_factor_frequencies;
   }
-  positive_average_value=positive_average_value*high_factor_frequencies+pre_positive_average_value*low_factor_frequencies;
+  pre2_positive_average_value=pre2_positive_average_value*high_factor_frequencies+pre_positive_average_value*low_factor_frequencies;
+  positive_average_value=positive_average_value*high_factor_frequencies+pre2_positive_average_value*low_factor_frequencies;
 }
 
 void SignalProcessing::negativeAverageValue(){
@@ -72,7 +78,8 @@ void SignalProcessing::negativeAverageValue(){
   else{
     pre_negative_average_value=pre_negative_average_value*high_factor_frequencies;
   }
-  negative_average_value=negative_average_value*high_factor_frequencies+pre_negative_average_value*low_factor_frequencies;
+  pre2_negative_average_value=pre2_negative_average_value*high_factor_frequencies+pre_negative_average_value*low_factor_frequencies;
+  negative_average_value=negative_average_value*high_factor_frequencies+pre2_negative_average_value*low_factor_frequencies;
   
   
 }
@@ -85,7 +92,8 @@ void SignalProcessing::signFactor(){
   else{
     pre_sign_factor=pre_sign_factor*high_factor_frequencies;
   }
-  sign_factor=sign_factor*high_factor_frequencies+pre_sign_factor*low_factor_frequencies;
+  pre2_sign_factor=pre2_sign_factor*high_factor_frequencies+pre_sign_factor*low_factor_frequencies;
+  sign_factor=sign_factor*high_factor_frequencies+pre2_sign_factor*low_factor_frequencies;
 }
 
 void SignalProcessing::averageNegativeValuesRespectAverageValue(){

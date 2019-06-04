@@ -5,47 +5,52 @@
 class SignalProcessing{
     public:
       //atributos publicos:
-      float proportional_constant=1; 
-      float offset_constant=0;
-      float time_now;
-      float time_before;
+      double proportional_constant=1; 
+      double offset_constant=0;
+      double time_now;
+      double time_before;
       
-      float instant_value;
-      float instant_value_before;
-      float sampling_frequency;
-      float maximun_frequency;
-      float low_factor_frequencies;
-      float high_factor_frequencies;  
+      double instant_value;
+      double instant_value_before;
+      double sampling_frequency;
+      double maximun_frequency;
+      double low_factor_frequencies;
+      double high_factor_frequencies;  
 
-      float loosen_signal;   //desface  
+      double loosen_signal;   //desface  
 
-      float pre_average_value;
-      float average_value;
+      double pre_average_value;
+      double pre2_average_value;
+      double average_value;
 
-      float pre_average_quadratic_value;
-      float average_quadratic_value;
+      double pre_average_quadratic_value;
+      double pre2_average_quadratic_value;
+      double average_quadratic_value;
 
-      float pre_positive_average_value;
-      float positive_average_value;
+      double pre_positive_average_value;
+      double pre2_positive_average_value;
+      double positive_average_value;
 
-      float pre_negative_average_value;
-      float negative_average_value;
+      double pre_negative_average_value;
+      double pre2_negative_average_value;
+      double negative_average_value;
 
-      float pre_sign_factor;
-      float sign_factor;
+      double pre_sign_factor;
+      double pre2_sign_factor;
+      double sign_factor;
 
-      float average_negative_values_respect_average_value;
+      double average_negative_values_respect_average_value;
 
 
       //constructores: 
-      SignalProcessing(float proportional, float offset, float maximun_frequency);
+      SignalProcessing(double proportional, double offset, double maximun_frequency);
                               
       //metodos:
-      void Processing(float value, uint32_t t);
+      void Processing(double value, double t);
 
     private:
       //atributos privados:
-      void instantValue(float value);
+      void instantValue(double value);
       void samplingFrequency();
       void loosenSignal();
       void averageValue();
